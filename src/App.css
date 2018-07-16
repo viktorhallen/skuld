@@ -34,7 +34,7 @@
 .icon-block {
   padding: 0 15px;
 }
-.icon-block .material-icons {
+.icon-block > .material-icons {
   font-size: inherit;
 }
 .skuldikoner {
@@ -54,6 +54,15 @@
   margin-top: -1rem;
     height : 2rem;
 }
-.skuldsiffra {
+.skuldikoner > span {
     margin-left: -3px;
+}
+.skuldikoner > .positive {
+    color:green;
+}
+.skuldikoner > .zero {
+    color:gray;
+}
+.skuldikoner > .negative {
+    color:red;
 }

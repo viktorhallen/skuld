@@ -7,6 +7,7 @@ import './App.css';
 import {Button, Icon, Navbar, NavItem, Collapsible, CollapsibleItem} from 'react-materialize'
 
 var icons_indexed = [beercan, pizza, beerjug];
+var icons_alttext = ["cheap beer", "pizza", "nice beer"];
 /*
 export default () => (
     <Button waves='light'>
@@ -38,6 +39,7 @@ class FriendList extends Component {
                 debt_images.push(
                     <DebtIconWithNumber
                         icon={icons_indexed[j]}
+                        alt={icons_alttext[j]}
                         value={(-1-i)**(j)}/>
                 )
             }
@@ -64,9 +66,8 @@ class DebtIconWithNumber extends Component {
     render() {
         return (
             <div className="skuldikoner">
-                <img src={this.props.icon} className="skuldbild"/>
-                <span className="skuldsiffra"
-                className={this.props.value>0?"positive":"negative"}>{this.props.value}</span>
+                <img src={this.props.icon} alt={this.props.alt} className="skuldbild"/>
+                <span className={this.props.value>0?"positive":(this.props.value===0?"zero":"negative")}>{this.props.value}</span>
             </div>
         )
     }
