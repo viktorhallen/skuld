@@ -3,11 +3,18 @@ import logo from './logo.svg';
 import beercan from './images/burk.svg';
 import pizza from './images/pizza.svg';
 import beerjug from './images/sejdel.svg';
+import beers from './images/beer.svg';
+import coffee from './images/coffee.svg';
+import popsicle from "./images/popsicle.svg";
 import './App.css';
 import {Button, Icon, Navbar, NavItem, Collapsible, CollapsibleItem} from 'react-materialize'
+import Cookies from 'universal-cookie';
+import SignInPage from './SignInPage.js';
 
-var icons_indexed = [beercan, pizza, beerjug];
-var icons_alttext = ["cheap beer", "pizza", "nice beer"];
+const cookies = new Cookies();
+
+var icons_indexed = [beercan, pizza, beerjug, coffee, popsicle];
+var icons_alttext = ["cheap beer", "pizza", "nice beer", "coffee", "icecream"];
 /*
 export default () => (
     <Button waves='light'>
@@ -17,8 +24,14 @@ export default () => (
 
 class MyNavBar extends Component {
     render() {
+        var title = (
+            <Fragment>
+                <img src={pizza} alt="" />
+                Pizzaskuld
+            </Fragment>
+        )
         return (
-            <Navbar brand='Pizzaskuld' className="Navbar" right>
+            <Navbar brand={title} className="Navbar" right>
                 <NavItem href='#'><Icon>search</Icon></NavItem>
                 <NavItem href='#'><Icon>view_module</Icon></NavItem>
                 <NavItem href='#'><Icon>refresh</Icon></NavItem>
@@ -29,15 +42,16 @@ class MyNavBar extends Component {
 }
 class FriendList extends Component {
     render() {
-        var friends = ["Andréas", "Christofer", "Viktor "];
+        var friends = ["Andréas", "Christofer", "Viktor"];
         var friends_elems = [];
         for (var i = 0; i < friends.length; i++) {
             // note: we add a key prop here to allow react to uniquely identify each
             // element in this array. see: https://reactjs.org/docs/lists-and-keys.html
             var debt_images = [];
-            for (var j = 0; j < 3; j++){
+            for (var j = 0; j < icons_indexed.length; j++){
                 debt_images.push(
                     <DebtIconWithNumber
+                        key={icons_alttext[j]}
                         icon={icons_indexed[j]}
                         alt={icons_alttext[j]}
                         value={(-1-i)**(j)}/>
@@ -46,13 +60,13 @@ class FriendList extends Component {
             var collapsible_header = <Fragment>
                 {friends[i]}
                 <div className="secondary-content">
-                    {debt_images}
+                    {debt_images.slice(0,3)}
                 </div>
             </Fragment>
             friends_elems.push(
-                <CollapsibleItem header={collapsible_header} icon='account_circle'>
-                    Lorem ipsum dolor sit amet.
+                <CollapsibleItem key={friends[i]} header={collapsible_header} icon='account_circle'>
                     {debt_images}
+                    <p>Lorem ipsum dolor sit amet.</p>
                 </CollapsibleItem>);
         }
         return (
@@ -72,29 +86,43 @@ class DebtIconWithNumber extends Component {
         )
     }
 }
-class App extends Component {
-  render() {
-    return (
-        <Fragment>
-            <MyNavBar/>
-            <FriendList/>
-            <Button waves='light'>
-                <Icon>thumb_up</Icon>
-            </Button>
-        </Fragment>
 
-        /*
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>*/
-    );
-  }
+class App extends Component {
+    signedIn = cookies.get('email');
+
+
+    signInHandler(e) {
+        this.setState({
+            signedIn: cookies.get('email')
+        })
+    }
+    signInHandler = this.signInHandler.bind(this);
+    render() {
+        if (!cookies.get('email')) {
+            return <SignInPage signInHandler={this.signInHandler}/>
+        } else {
+            return (
+                <Fragment>
+                    <MyNavBar/>
+                    <FriendList/>
+                    <Button waves='light'>
+                        <Icon>thumb_up</Icon>
+                    </Button>
+                </Fragment>
+
+                /*
+              <div className="App">
+                <header className="App-header">
+                  <img src={logo} className="App-logo" alt="logo" />
+                  <h1 className="App-title">Welcome to React</h1>
+                </header>
+                <p className="App-intro">
+                  To get started, edit <code>src/App.js</code> and save to reload.
+                </p>
+              </div>*/
+            );
+        }
+    }
 }
 
 export default App;
