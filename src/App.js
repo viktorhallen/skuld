@@ -26,7 +26,7 @@ class MyNavBar extends Component {
     render() {
         var title = (
             <Fragment>
-                <img src={pizza} alt="" />
+                <img src={beers} alt="" />
                 Pizzaskuld
             </Fragment>
         )
@@ -42,9 +42,9 @@ class MyNavBar extends Component {
 }
 class FriendList extends Component {
     render() {
-        var friends = ["Andréas", "Christofer", "Viktor"];
+        //var friends = ["Andréas", "Christofer", "Viktor"];
         var friends_elems = [];
-        for (var i = 0; i < friends.length; i++) {
+        for (var i = 0; i < this.props.friends.length; i++) {
             // note: we add a key prop here to allow react to uniquely identify each
             // element in this array. see: https://reactjs.org/docs/lists-and-keys.html
             var debt_images = [];
@@ -58,15 +58,15 @@ class FriendList extends Component {
                 )
             }
             var collapsible_header = <Fragment>
-                {friends[i]}
+                {this.props.friends[i].firstName}
                 <div className="secondary-content">
                     {debt_images.slice(0,3)}
                 </div>
             </Fragment>
             friends_elems.push(
-                <CollapsibleItem key={friends[i]} header={collapsible_header} icon='account_circle'>
+                <CollapsibleItem key={this.props.friends[i].email} header={collapsible_header} icon='account_circle'>
                     {debt_images}
-                    <p>Lorem ipsum dolor sit amet.</p>
+                    <p style={{display:"none"}}>Lorem ipsum dolor sit amet.</p>
                 </CollapsibleItem>);
         }
         return (
@@ -88,7 +88,25 @@ class DebtIconWithNumber extends Component {
 }
 
 class App extends Component {
-    signedIn = cookies.get('email');
+    state = {
+        response: '',
+        signedIn: false,
+        friends: ''
+    };
+    componentDidMount() {
+        this.callApi()
+            .then(res => this.setState({ response: res.express }))
+            .catch(err => console.log(err));
+    }
+    callApi = async () => {
+        const response = await fetch('//pizza:3001/users/5', {mode:"cors"});
+        const body = await response.json();
+        if (response.status !== 200) throw Error(body.message);
+        this.setState({
+            friends: body
+        })
+        return body;
+    };
 
 
     signInHandler(e) {
@@ -104,10 +122,11 @@ class App extends Component {
             return (
                 <Fragment>
                     <MyNavBar/>
-                    <FriendList/>
+                    <FriendList friends={this.state.friends}/>
                     <Button waves='light'>
                         <Icon>thumb_up</Icon>
                     </Button>
+                    <p className="App-intro">{this.state.response}</p>
                 </Fragment>
 
                 /*
